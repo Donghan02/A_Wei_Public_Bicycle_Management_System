@@ -289,9 +289,9 @@ void CCS20200360222Dlg::PaintLine(int x1,int y1 ,int x2,int y2)
 	int y_10_n = abs(ydifference) / 10;
 	int y_10_n_r = abs(ydifference) % 10;
 	int tx1 = x1, ty1 = y1, tx2 = x1, ty2 = y1;
-	if (xdifference < 0)
+	if (xdifference < 0)  // 根据曼哈顿距离画线 
 	{
-		if (ydifference < 0)
+		if (ydifference < 0)  // 根据起点与终点在位图中的上下左右关系进行分类
 		{
 			if (x_10_n > y_10_n)
 			{
@@ -799,6 +799,22 @@ void CCS20200360222Dlg::OnBnClickedLengthsearchbutton()
 			ESB.GetLBText(tempID2, temp2);  // 得到起始站点下拉框当前ID下的内容并存入temp1中
 			int num2 = ESB.FindStringExact(0, temp2);  // 得到对应内容的索引
 			distance = (fabs(_wtof(Longitude[num1]) - _wtof(Longitude[num2])) * 1460 + fabs(_wtof(Latitude[num1]) - _wtof(Latitude[num2])) * 1960) / 5.0 ;
+			ClearScreen(); // 清屏
+			PaintPointWithoutMessage(num1, 29, 222, 57, 13);  // 画出两个点
+			PaintPointWithoutMessage(num2, 224, 105, 27, 13);
+			// 将两个点连起来
+			CDC* pDC;
+			pDC = MAP.GetDC();
+			CPen pen;
+			pen.CreatePen(1, 3, RGB(183, 97, 207));
+			pDC->SelectObject(&pen);
+			int x1 = ((87.8 + _wtof(Longitude[num1])) * 1460.0), y1 = ((42.1 - _wtof(Latitude[num1])) * 1960.0); // 坐标放大
+			int x2 = ((87.8 + _wtof(Longitude[num2])) * 1460.0), y2 = ((42.1 - _wtof(Latitude[num2])) * 1960.0); // 坐标放大
+			pDC->TextOutW(x1 + 10, y1 - 20, TEXT("起点"));  // 显示“起点”
+			pDC->TextOutW(x2 + 10, y2 - 20, TEXT("终点"));  // 显示“终点”
+			pDC->MoveTo(x1, y1);
+			pDC->LineTo(x2, y2);
+			ReleaseDC(pDC);
 			temp3.Format(_T("%d"), distance);  // 将整型转化为字符串
 			GetDlgItem(IDDistance)->SetWindowText(temp3);
 		}
@@ -859,7 +875,7 @@ void CCS20200360222Dlg::OnBnClickedUhistorybutton()
 		int flag2 = 0;
 		int num1, num2;
 		int x1, y1, x2, y2;
-		while (flag2 == 0)
+		while (flag2 == 0)  // 生成两个x距离与y距离相差不大并且距离不至于太近的两个随机点
 		{
 			num1 = rand() % 589;
 			num2 = rand() % 589;
@@ -892,5 +908,5 @@ void CCS20200360222Dlg::OnBnClickedUhistorybutton()
 void CCS20200360222Dlg::OnBnClickedButton6()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	system("start explorer https://github.com/Donghan02/A_Wei_Public_Bicycle_Management_System.git");
+	system("start explorer https://github.com/Donghan02/A_Wei_Public_Bicycle_Management_System.git");  // 跳转到github
 }
